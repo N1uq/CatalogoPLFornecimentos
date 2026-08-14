@@ -1,0 +1,19 @@
+{
+  "name": "pl-fornecimento-catalogo",
+  "version": "1.0.0",
+  "description": "Catálogo Digital Premium PL FORNECIMENTO",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "index": "node scripts/index-catalog.js"
+  },
+  "keywords": [
+    "catalogo",
+    "futebol",
+    "roupas",
+    "pl-fornecimento"
+  ],
+  "author": "PL Fornecimento",
+  "license": "ISC"
+}

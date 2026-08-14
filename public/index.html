@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PL Fornecimento | Catálogo Digital Premium de Roupas e Artigos Esportivos</title>
+  
+  <!-- ANTI-FOUC THEME INITIALIZER (Previne piscar de tema) -->
+  <script>
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('pl_theme');
+        var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Conheça o catálogo digital oficial da PL Fornecimento. Seleção completa de camisas de futebol, seleções, modelos retrô, cortas-vento e artigos esportivos organizados por categorias e times.">
+  <meta name="keywords" content="PL Fornecimento, catálogo de camisas, camisa de futebol, camisas retrô, artigos esportivos, fornecedor de camisas, moda esportiva">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="http://localhost:3000/">
+
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PL Fornecimento | Catálogo Digital Premium">
+  <meta property="og:description" content="Catálogo completo de camisas e artigos esportivos para lojistas e distribuidores. Explore modelos da Premier League, La Liga, Brasileirão, Seleções e Retrô.">
+  <meta property="og:site_name" content="PL Fornecimento">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css?v=2.0">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header" id="main-header">
+    <div class="container header-container">
+      
+      <!-- BRAND LOGO WITH OFFICIAL IMAGE + WORDMARK -->
+      <a href="/" class="brand-logo" id="brand-logo-link" aria-label="PL Fornecimento">
+        <img src="https://i.imgur.com/mof2M5y.png" alt="PL FORNECIMENTO Logo" class="brand-logo-img" onerror="this.style.display='none';">
+        <span class="brand-logo-text">PL FORNECIMENTO</span>
+        <span class="badge-pro">CATÁLOGO</span>
+      </a>
+
+      <!-- NAVIGATION MENU -->
+      <nav>
+        <ul class="nav-menu" id="nav-menu">
+          <li><a href="#hero" class="nav-link active" data-nav="home">Início</a></li>
+          <li><a href="#catalogo" class="nav-link" data-nav="catalogo">Catálogo</a></li>
+          <li><a href="#categorias" class="nav-link" data-nav="categorias">Categorias</a></li>
+        </ul>
+      </nav>
+
+      <!-- HEADER ACTIONS -->
+      <div class="header-actions">
+        
+        <!-- SEARCH BOX WITH DROPDOWN & CLEAR BUTTON -->
+        <div class="header-search" id="header-search-container">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input type="text" id="global-search-input" class="search-input" placeholder="Buscar time, seleção ou modelo..." autocomplete="off">
+          <button type="button" class="btn-search-clear" id="btn-search-clear" style="display: none;" aria-label="Limpar busca">✕</button>
+          
+          <!-- SEARCH SUGGESTIONS & RECENT HISTORY DROPDOWN -->
+          <div class="search-dropdown" id="search-dropdown" style="display: none;">
+            <!-- Rendered dynamically via JS -->
+          </div>
+        </div>
+
+        <!-- DARK MODE TOGGLE BUTTON -->
+        <button class="btn-theme-toggle" id="btn-theme-toggle" aria-label="Alternar Tema Claro/Escuro" title="Alternar Modo Escuro">
+          <svg class="theme-icon sun-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <svg class="theme-icon moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
+
+        <!-- MOBILE MENU TOGGLE BUTTON -->
+        <button class="btn-mobile-toggle" id="btn-mobile-toggle" aria-label="Abrir Menu">
+          ☰
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <div class="hero-tag">
+        <span>⚡ Distribuição & Alta Qualidade</span>
+      </div>
+      
+      <h1 class="hero-title">PL FORNECIMENTO</h1>
+      <p class="hero-subtitle">
+        Catálogo completo de camisas e artigos esportivos.<br>
+        Explore nossos modelos e encontre o produto ideal para seu negócio.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#catalogo" class="btn-primary" id="btn-hero-explore">
+          <span>EXPLORAR CATÁLOGO</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-number" id="stat-products">13.952</div>
+          <div class="stat-label">Modelos no Catálogo</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="stat-images">79.840</div>
+          <div class="stat-label">Fotografias HD</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Organizado por Pastas</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED CATEGORIES SECTION -->
+  <section class="section" id="categorias">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Explore por Categoria</h2>
+          <p class="section-subtitle">Navegue pelas principais ligas e modalidades esportivas do nosso catálogo</p>
+        </div>
+      </div>
+
+      <div class="categories-grid" id="categories-grid">
+        <!-- Generated dynamically via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CATALOG SECTION -->
+  <section class="section" id="catalogo">
+    <div class="container">
+      
+      <!-- BREADCRUMBS -->
+      <div class="breadcrumbs" id="breadcrumbs-container">
+        <span class="breadcrumb-item" data-breadcrumb="home">Início</span>
+        <span class="breadcrumb-separator">></span>
+        <span class="breadcrumb-current">Catálogo Completo</span>
+      </div>
+
+      <!-- FILTER CONTROLS BAR -->
+      <div class="catalog-controls">
+        
+        <!-- Category Filter Row -->
+        <div class="filter-row" id="filter-categories-row">
+          <span class="filter-label">Categorias:</span>
+          <!-- Dynamic Category Pills -->
+        </div>
+
+        <!-- Subcategory / Team Filter Row -->
+        <div class="filter-row" id="filter-teams-row" style="display: none;">
+          <span class="filter-label">Times:</span>
+          <!-- Dynamic Team Pills -->
+        </div>
+
+        <!-- Gender / Type Filter Row -->
+        <div class="filter-row" id="filter-options-row">
+          <span class="filter-label">Edição:</span>
+          <button class="filter-pill active" data-filter-type="all">Todas as Edições</button>
+          <button class="filter-pill" data-filter-type="Torcedor">Torcedor</button>
+          <button class="filter-pill" data-filter-type="Jogador">Jogador</button>
+          <button class="filter-pill" data-filter-type="Retrô">Retrô</button>
+          <button class="filter-pill" data-filter-type="Agasalhos & Corta-Vento">Agasalho / Corta-Vento</button>
+
+          <span class="filter-label" style="margin-left: 1rem;">Público:</span>
+          <button class="filter-pill active" data-filter-gender="all">Todos</button>
+          <button class="filter-pill" data-filter-gender="Masculino">Masculino</button>
+          <button class="filter-pill" data-filter-gender="Feminino">Feminino</button>
+          <button class="filter-pill" data-filter-gender="Infantil">Infantil</button>
+        </div>
+
+      </div>
+
+      <!-- CATALOG INFO BAR -->
+      <div class="catalog-info-bar">
+        <div id="results-count-text">Exibindo catálogo completo...</div>
+        <div class="active-filters-summary" id="active-filters-container">
+          <!-- Active Filter Tags -->
+        </div>
+      </div>
+
+      <!-- PRODUCT GRID -->
+      <div class="products-grid" id="products-grid">
+        <!-- Product Cards dynamically rendered -->
+      </div>
+
+      <!-- INFINITE SCROLL SENTINEL -->
+      <div class="infinite-scroll-trigger" id="infinite-scroll-sentinel">
+        <span>Carregando mais modelos do catálogo...</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- LIGHTBOX MODAL VIEWER -->
+  <div class="lightbox-modal" id="lightbox-modal" aria-hidden="true">
+    <button class="lightbox-close-btn" id="lightbox-close-btn" aria-label="Fechar">✕</button>
+
+    <div class="lightbox-content">
+      <div class="lightbox-header-info">
+        <div class="lightbox-title" id="lightbox-title">Nome do Produto</div>
+        <div class="lightbox-meta" id="lightbox-meta">Categoria > Time</div>
+      </div>
+
+      <div class="lightbox-main-view">
+        <button class="lightbox-nav-btn lightbox-prev" id="lightbox-prev-btn" aria-label="Foto Anterior">❮</button>
+        <img src="" alt="Fotografia do produto" class="lightbox-image" id="lightbox-image">
+        <button class="lightbox-nav-btn lightbox-next" id="lightbox-next-btn" aria-label="Próxima Foto">❯</button>
+      </div>
+
+      <div class="lightbox-thumbnails" id="lightbox-thumbnails">
+        <!-- Thumbnails rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING BACK TO TOP BUTTON -->
+  <button class="btn-back-to-top" id="btn-back-to-top" aria-label="Voltar ao Topo">
+    ↑
+  </button>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand-wrap">
+        <img src="https://i.imgur.com/mof2M5y.png" alt="PL FORNECIMENTO" class="footer-logo-img" onerror="this.style.display='none';">
+        <span class="footer-brand">PL FORNECIMENTO</span>
+      </div>
+      <p style="color: var(--text-secondary); font-size: 0.9rem;">
+        Catálogo digital de camisas e artigos esportivos.
+      </p>
+
+      <ul class="footer-links">
+        <li><a href="#hero">Início</a></li>
+        <li><a href="#catalogo">Catálogo</a></li>
+        <li><a href="#categorias">Categorias</a></li>
+      </ul>
+
+      <div class="footer-copy">
+        © PL Fornecimento — Todos os direitos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <!-- App Script -->
+  <script src="/js/app.js?v=2.0"></script>
+</body>
+</html>

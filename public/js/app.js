@@ -165,15 +165,30 @@
     }
   }
 
+  const CLOUDFLARE_TUNNEL_URL = 'https://martial-paradise-nutrition-racks.trycloudflare.com';
+
+  function getProductImageUrl(dir, filename) {
+    if (!dir || !filename) return '';
+    const encodedDir = dir.split('/').map(encodeURIComponent).join('/');
+    const encodedFile = encodeURIComponent(filename);
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (!isLocal) {
+      return `${CLOUDFLARE_TUNNEL_URL}/${encodedDir}/${encodedFile}`;
+    }
+    return `/${encodedDir}/${encodedFile}`;
+  }
+
   // Render Category Cards (Featured Section)
   function renderFeaturedCategories() {
     if (!elements.categoriesGrid || !categoriesData.length) return;
 
     elements.categoriesGrid.innerHTML = categoriesData.map(cat => {
-      const coverUrl = '/' + cat.cover.split('/').map(encodeURIComponent).join('/');
+      const parts = cat.cover.split('/');
+      const coverUrl = getProductImageUrl(parts[0], parts[1]);
+      const fallbackUrl = `${CLOUDFLARE_TUNNEL_URL}/${cat.cover.split('/').map(encodeURIComponent).join('/')}`;
       return `
         <div class="category-card" data-category-name="${escapeHtml(cat.name)}">
-          <img src="${coverUrl}" alt="${escapeHtml(cat.name)}" loading="lazy" />
+          <img src="${coverUrl}" alt="${escapeHtml(cat.name)}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackUrl}';" />
           <div class="category-overlay">
             <div class="category-card-name">${escapeHtml(cat.name)}</div>
             <div class="category-card-count">${cat.productCount.toLocaleString('pt-BR')} produtos no catálogo</div>
@@ -474,12 +489,13 @@
     }
 
     elements.productsGrid.innerHTML = productsToDisplay.map(product => {
-      const coverPath = '/' + encodeURIComponent(product.dir) + '/' + encodeURIComponent(product.cover);
+      const coverPath = getProductImageUrl(product.dir, product.cover);
+      const fallbackUrl = `${CLOUDFLARE_TUNNEL_URL}/${encodeURIComponent(product.dir)}/${encodeURIComponent(product.cover)}`;
       const highlightedTitle = highlightMatch(product.title, activeState.search);
       return `
         <div class="product-card" data-product-id="${product.id}">
           <div class="product-thumb-container">
-            <img src="${coverPath}" alt="${escapeHtml(product.title)}" loading="lazy" />
+            <img src="${coverPath}" alt="${escapeHtml(product.title)}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackUrl}';" />
             ${product.imageCount > 1 ? `<div class="image-count-badge">📷 ${product.imageCount}</div>` : ''}
           </div>
           <div class="product-info">
@@ -773,11 +789,15 @@
     if (!currentLightboxProduct) return;
 
     const imgName = currentLightboxProduct.images[currentImageIndex];
-    const imgUrl = '/' + encodeURIComponent(currentLightboxProduct.dir) + '/' + encodeURIComponent(imgName);
+    const imgUrl = getProductImageUrl(currentLightboxProduct.dir, imgName);
 
     elements.lightboxTitle.textContent = currentLightboxProduct.title;
     elements.lightboxMeta.textContent = `${currentLightboxProduct.category} > ${currentLightboxProduct.subcategory} • Foto ${currentImageIndex + 1} de ${currentLightboxProduct.images.length}`;
     elements.lightboxImage.src = imgUrl;
+    elements.lightboxImage.onerror = function() {
+      this.onerror = null;
+      this.src = `${CLOUDFLARE_TUNNEL_URL}/${encodeURIComponent(currentLightboxProduct.dir)}/${encodeURIComponent(imgName)}`;
+    };
 
     if (currentLightboxProduct.images.length > 1) {
       elements.lightboxPrevBtn.style.display = 'flex';
@@ -785,10 +805,11 @@
       elements.lightboxThumbnails.style.display = 'flex';
 
       elements.lightboxThumbnails.innerHTML = currentLightboxProduct.images.map((img, idx) => {
-        const thumbUrl = '/' + encodeURIComponent(currentLightboxProduct.dir) + '/' + encodeURIComponent(img);
+        const thumbUrl = getProductImageUrl(currentLightboxProduct.dir, img);
+        const thumbFallback = `${CLOUDFLARE_TUNNEL_URL}/${encodeURIComponent(currentLightboxProduct.dir)}/${encodeURIComponent(img)}`;
         return `
           <div class="lightbox-thumb ${idx === currentImageIndex ? 'active' : ''}" data-thumb-idx="${idx}">
-            <img src="${thumbUrl}" alt="Miniatura ${idx + 1}" />
+            <img src="${thumbUrl}" alt="Miniatura ${idx + 1}" onerror="this.onerror=null; this.src='${thumbFallback}';" />
           </div>
         `;
       }).join('');

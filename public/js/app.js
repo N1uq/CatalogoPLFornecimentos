@@ -565,11 +565,17 @@
       const coverPath = getProductImageUrl(product.dir, product.cover);
       const highlightedTitle = highlightMatch(product.title, activeState.search);
       const safeTitleEscaped = escapeHtml(product.title).replace(/'/g, "\\'");
+      const waMsg = encodeURIComponent(`Olá! Vim pelo catálogo PL Fornecimento e tenho interesse no modelo:\n📦 ${product.title}\n📁 Categoria: ${product.category} - ${product.subcategory}`);
+      const waUrl = `https://wa.me/5585992528809?text=${waMsg}`;
+
       return `
         <div class="product-card" data-product-id="${product.id}">
           <div class="product-thumb-container">
             <img src="${coverPath}" alt="${escapeHtml(product.title)}" loading="lazy" onerror="window.handleImageError(this, '${coverPath}', '${product.id}', '${safeTitleEscaped}');" />
             ${product.imageCount > 1 ? `<div class="image-count-badge">📷 ${product.imageCount}</div>` : ''}
+            <a href="${waUrl}" target="_blank" rel="noopener" class="card-wa-btn" onclick="event.stopPropagation();" title="Pedir no WhatsApp">
+              💬 Pedir
+            </a>
           </div>
           <div class="product-info">
             <div class="product-category-tag">${escapeHtml(product.category)} • ${escapeHtml(product.subcategory)}</div>
@@ -604,6 +610,7 @@
     elements.globalSearchInput.value = term;
     activeState.search = term;
     applyFilters();
+    scrollToCatalogSection();
   };
 
   // Load Next Batch on Scroll
@@ -712,6 +719,7 @@
           activeState.search = term;
           hideSearchDropdown();
           applyFilters();
+          scrollToCatalogSection();
         });
       });
 
@@ -744,6 +752,7 @@
     });
 
     applyFilters();
+    scrollToCatalogSection();
   }
 
   // Update Breadcrumb UI
@@ -938,7 +947,21 @@
       searchTimeout = setTimeout(() => {
         activeState.search = e.target.value;
         applyFilters();
-      }, 250); // 250ms Debounce
+        if (e.target.value.trim().length >= 2) {
+          scrollToCatalogSection();
+        }
+      }, 300); // 300ms Debounce
+    });
+
+    // Handle Enter Key press on search input for immediate scroll and submission
+    elements.globalSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        clearTimeout(searchTimeout);
+        activeState.search = e.target.value;
+        hideSearchDropdown();
+        applyFilters();
+        scrollToCatalogSection();
+      }
     });
 
     elements.globalSearchInput.addEventListener('focus', () => {
@@ -1009,7 +1032,14 @@
 
   function scrollToCatalogSection() {
     const catalogEl = document.getElementById('catalogo');
-    if (catalogEl) catalogEl.scrollIntoView({ behavior: 'smooth' });
+    if (!catalogEl) return;
+    const headerHeight = 90;
+    const elementPosition = catalogEl.getBoundingClientRect().top + window.pageYOffset;
+    const offsetPosition = elementPosition - headerHeight;
+    window.scrollTo({
+      top: Math.max(0, offsetPosition),
+      behavior: 'smooth'
+    });
   }
 
   function updateURLParams() {

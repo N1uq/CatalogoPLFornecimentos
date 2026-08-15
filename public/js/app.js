@@ -166,7 +166,7 @@
   }
 
   // Global Image Base URL Strategy & Resilient Loader
-  window.IMAGE_BASE_URL = window.IMAGE_BASE_URL || '';
+  window.IMAGE_BASE_URL = window.IMAGE_BASE_URL || 'https://pub-6d2973b55c1d47578ed242aa628fd9af.r2.dev';
   window.PL_IMAGE_LOGS = window.PL_IMAGE_LOGS || [];
 
   function logImageError(data) {

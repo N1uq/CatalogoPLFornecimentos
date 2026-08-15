@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "index": "node scripts/index-catalog.js"
+    "index": "node scripts/index-catalog.js",
+    "upload-r2": "node scripts/upload-r2.js"
   },
   "keywords": [
     "catalogo",
@@ -15,5 +16,8 @@
     "pl-fornecimento"
   ],
   "author": "PL Fornecimento",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1111.0"
+  }
 }

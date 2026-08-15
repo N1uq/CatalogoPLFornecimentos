@@ -165,18 +165,91 @@
     }
   }
 
-  const CLOUDFLARE_TUNNEL_URL = 'https://martial-paradise-nutrition-racks.trycloudflare.com';
+  // Global Image Base URL Strategy & Resilient Loader
+  window.IMAGE_BASE_URL = window.IMAGE_BASE_URL || '';
+  window.PL_IMAGE_LOGS = window.PL_IMAGE_LOGS || [];
+
+  function logImageError(data) {
+    const entry = {
+      timestamp: new Date().toISOString(),
+      url: data.url,
+      productId: data.productId || null,
+      productTitle: data.productTitle || null,
+      status: data.status || 'ERROR',
+      attempts: data.attempts || 1
+    };
+    window.PL_IMAGE_LOGS.push(entry);
+    if (window.PL_IMAGE_LOGS.length > 200) {
+      window.PL_IMAGE_LOGS.shift();
+    }
+  }
 
   function getProductImageUrl(dir, filename) {
     if (!dir || !filename) return '';
-    const encodedDir = dir.split('/').map(encodeURIComponent).join('/');
-    const encodedFile = encodeURIComponent(filename);
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    if (!isLocal) {
-      return `${CLOUDFLARE_TUNNEL_URL}/${encodedDir}/${encodedFile}`;
+    const cleanDir = dir.toString().split('/').map(encodeURIComponent).join('/');
+    const cleanFile = encodeURIComponent(filename.toString());
+    const relativePath = `/${cleanDir}/${cleanFile}`;
+
+    if (window.IMAGE_BASE_URL) {
+      const baseUrl = window.IMAGE_BASE_URL.replace(/\/+$/, '');
+      return `${baseUrl}${relativePath}`;
     }
-    return `/${encodedDir}/${encodedFile}`;
+    return relativePath;
   }
+
+  // Visual Fallback SVG Data URL (matching light & dark theme)
+  const FALLBACK_IMAGE_DATA_URL = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" fill="none">
+      <rect width="400" height="400" fill="#151816" rx="12"/>
+      <g transform="translate(150, 120)">
+        <circle cx="50" cy="50" r="42" stroke="#20a85e" stroke-width="3" stroke-dasharray="6 6" fill="none" opacity="0.6"/>
+        <path d="M35 50L45 60L65 40" stroke="#20a85e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+      </g>
+      <text x="50%" y="240" text-anchor="middle" fill="#aeb6b1" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="600">Imagem Indisponível</text>
+      <text x="50%" y="265" text-anchor="middle" fill="#737d76" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12">PL FORNECIMENTO</text>
+    </svg>
+  `);
+
+  window.handleImageError = function (imgElement, originalUrl, productId, productTitle) {
+    if (!imgElement) return;
+
+    let attempt = parseInt(imgElement.getAttribute('data-retry-count') || '0', 10);
+    const maxRetries = 3;
+
+    attempt += 1;
+    imgElement.setAttribute('data-retry-count', attempt.toString());
+
+    logImageError({
+      url: originalUrl || imgElement.src,
+      productId: productId,
+      productTitle: productTitle,
+      status: `RETRY_ATTEMPT_${attempt}`,
+      attempts: attempt
+    });
+
+    if (attempt <= maxRetries) {
+      const delay = attempt === 1 ? 300 : Math.pow(2, attempt - 2) * 1000;
+      setTimeout(() => {
+        const targetUrl = originalUrl || imgElement.src;
+        const cleanUrl = targetUrl.split('?')[0];
+        imgElement.src = `${cleanUrl}?_retry=${attempt}_${Date.now()}`;
+      }, delay);
+    } else {
+      imgElement.onerror = null;
+      imgElement.src = FALLBACK_IMAGE_DATA_URL;
+      imgElement.classList.add('img-fallback-active');
+      if (imgElement.parentElement) {
+        imgElement.parentElement.classList.add('has-fallback-image');
+      }
+      logImageError({
+        url: originalUrl || imgElement.src,
+        productId: productId,
+        productTitle: productTitle,
+        status: 'FINAL_FALLBACK_APPLIED',
+        attempts: attempt
+      });
+    }
+  };
 
   // Render Category Cards (Featured Section)
   function renderFeaturedCategories() {
@@ -185,10 +258,10 @@
     elements.categoriesGrid.innerHTML = categoriesData.map(cat => {
       const parts = cat.cover.split('/');
       const coverUrl = getProductImageUrl(parts[0], parts[1]);
-      const fallbackUrl = `${CLOUDFLARE_TUNNEL_URL}/${cat.cover.split('/').map(encodeURIComponent).join('/')}`;
+      const safeNameEscaped = escapeHtml(cat.name).replace(/'/g, "\\'");
       return `
         <div class="category-card" data-category-name="${escapeHtml(cat.name)}">
-          <img src="${coverUrl}" alt="${escapeHtml(cat.name)}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackUrl}';" />
+          <img src="${coverUrl}" alt="${escapeHtml(cat.name)}" loading="lazy" onerror="window.handleImageError(this, '${coverUrl}', 'category', '${safeNameEscaped}');" />
           <div class="category-overlay">
             <div class="category-card-name">${escapeHtml(cat.name)}</div>
             <div class="category-card-count">${cat.productCount.toLocaleString('pt-BR')} produtos no catálogo</div>
@@ -490,12 +563,12 @@
 
     elements.productsGrid.innerHTML = productsToDisplay.map(product => {
       const coverPath = getProductImageUrl(product.dir, product.cover);
-      const fallbackUrl = `${CLOUDFLARE_TUNNEL_URL}/${encodeURIComponent(product.dir)}/${encodeURIComponent(product.cover)}`;
       const highlightedTitle = highlightMatch(product.title, activeState.search);
+      const safeTitleEscaped = escapeHtml(product.title).replace(/'/g, "\\'");
       return `
         <div class="product-card" data-product-id="${product.id}">
           <div class="product-thumb-container">
-            <img src="${coverPath}" alt="${escapeHtml(product.title)}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackUrl}';" />
+            <img src="${coverPath}" alt="${escapeHtml(product.title)}" loading="lazy" onerror="window.handleImageError(this, '${coverPath}', '${product.id}', '${safeTitleEscaped}');" />
             ${product.imageCount > 1 ? `<div class="image-count-badge">📷 ${product.imageCount}</div>` : ''}
           </div>
           <div class="product-info">
@@ -790,13 +863,13 @@
 
     const imgName = currentLightboxProduct.images[currentImageIndex];
     const imgUrl = getProductImageUrl(currentLightboxProduct.dir, imgName);
+    const safeTitleEscaped = escapeHtml(currentLightboxProduct.title).replace(/'/g, "\\'");
 
     elements.lightboxTitle.textContent = currentLightboxProduct.title;
     elements.lightboxMeta.textContent = `${currentLightboxProduct.category} > ${currentLightboxProduct.subcategory} • Foto ${currentImageIndex + 1} de ${currentLightboxProduct.images.length}`;
     elements.lightboxImage.src = imgUrl;
     elements.lightboxImage.onerror = function() {
-      this.onerror = null;
-      this.src = `${CLOUDFLARE_TUNNEL_URL}/${encodeURIComponent(currentLightboxProduct.dir)}/${encodeURIComponent(imgName)}`;
+      window.handleImageError(this, imgUrl, currentLightboxProduct.id, safeTitleEscaped);
     };
 
     if (currentLightboxProduct.images.length > 1) {
@@ -806,10 +879,9 @@
 
       elements.lightboxThumbnails.innerHTML = currentLightboxProduct.images.map((img, idx) => {
         const thumbUrl = getProductImageUrl(currentLightboxProduct.dir, img);
-        const thumbFallback = `${CLOUDFLARE_TUNNEL_URL}/${encodeURIComponent(currentLightboxProduct.dir)}/${encodeURIComponent(img)}`;
         return `
           <div class="lightbox-thumb ${idx === currentImageIndex ? 'active' : ''}" data-thumb-idx="${idx}">
-            <img src="${thumbUrl}" alt="Miniatura ${idx + 1}" onerror="this.onerror=null; this.src='${thumbFallback}';" />
+            <img src="${thumbUrl}" alt="Miniatura ${idx + 1}" onerror="window.handleImageError(this, '${thumbUrl}', '${currentLightboxProduct.id}', '${safeTitleEscaped}');" />
           </div>
         `;
       }).join('');

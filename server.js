@@ -16,6 +16,7 @@ const mimeTypes = {
   '.jpeg': 'image/jpeg',
   '.png': 'image/png',
   '.webp': 'image/webp',
+  '.avif': 'image/avif',
   '.gif': 'image/gif',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
@@ -28,6 +29,17 @@ const mimeTypes = {
 
 const server = http.createServer((req, res) => {
   try {
+    // Handle CORS Preflight
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204, {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      });
+      res.end();
+      return;
+    }
+
     const parsedUrl = url.parse(req.url);
     let pathname = decodeURIComponent(parsedUrl.pathname);
 
@@ -51,7 +63,11 @@ const server = http.createServer((req, res) => {
         if (!path.extname(pathname)) {
           filePath = path.join(publicDir, 'index.html');
         } else {
-          res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+          console.warn(`[404 NOT FOUND] Requisicao de imagem ou arquivo nao encontrado: ${pathname}`);
+          res.writeHead(404, {
+            'Content-Type': 'text/plain; charset=utf-8',
+            'Access-Control-Allow-Origin': '*'
+          });
           res.end('404 Not Found');
           return;
         }
@@ -67,7 +83,7 @@ const server = http.createServer((req, res) => {
     };
 
     // Cache static images for high performance
-    if (['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg', '.woff2'].includes(ext)) {
+    if (['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif', '.svg', '.woff2'].includes(ext)) {
       headers['Cache-Control'] = 'public, max-age=31536000, immutable';
     } else {
       headers['Cache-Control'] = 'no-cache';

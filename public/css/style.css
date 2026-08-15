@@ -1173,3 +1173,26 @@ h1, h2, h3, h4, .font-heading {
     gap: 1.5rem;
   }
 }
+
+/* ==========================================================================
+   RESILIENT IMAGE FALLBACK & LOADING STATES
+   ========================================================================== */
+.product-thumb-container,
+.category-card {
+  position: relative;
+  background-color: var(--bg-surface);
+}
+
+img.img-fallback-active {
+  object-fit: contain !important;
+  padding: 1.5rem;
+  opacity: 0.85;
+  filter: grayscale(0.2);
+  transition: opacity 0.3s ease;
+}
+
+.has-fallback-image {
+  background: var(--bg-surface) !important;
+  border-color: var(--border-color);
+}
+

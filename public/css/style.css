@@ -481,6 +481,50 @@ h1, h2, h3, h4, .font-heading {
   margin-top: 0.25rem;
 }
 
+/* Discreet Promo Banner */
+.banner-wrapper {
+  margin: 2.5rem auto 0.5rem;
+}
+
+.promo-banner-card {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.promo-banner-card:hover {
+  border-color: var(--primary-green);
+  box-shadow: var(--shadow-lg);
+}
+
+.promo-banner-img {
+  width: 100%;
+  height: auto;
+  max-height: 240px;
+  object-fit: cover;
+  display: block;
+  opacity: 0.92;
+  transition: opacity 0.3s ease;
+}
+
+.promo-banner-card:hover .promo-banner-img {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .banner-wrapper {
+    margin: 1.5rem auto 0;
+  }
+  .promo-banner-img {
+    max-height: 160px;
+  }
+}
+
 /* ==========================================================================
    FEATURED CATEGORIES SECTION
    ========================================================================== */

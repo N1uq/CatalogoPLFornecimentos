@@ -872,6 +872,12 @@
       window.handleImageError(this, imgUrl, currentLightboxProduct.id, safeTitleEscaped);
     };
 
+    const waBtn = document.getElementById('lightbox-whatsapp-btn');
+    if (waBtn) {
+      const msg = encodeURIComponent(`Olá! Vim pelo catálogo PL Fornecimento e tenho interesse no modelo:\n📦 ${currentLightboxProduct.title}\n📁 Categoria: ${currentLightboxProduct.category} - ${currentLightboxProduct.subcategory}`);
+      waBtn.href = `https://wa.me/5585992528809?text=${msg}`;
+    }
+
     if (currentLightboxProduct.images.length > 1) {
       elements.lightboxPrevBtn.style.display = 'flex';
       elements.lightboxNextBtn.style.display = 'flex';
